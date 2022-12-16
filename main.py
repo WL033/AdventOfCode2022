@@ -10,22 +10,20 @@ with open('input.txt', 'r') as f:
 Step 3
 Have a function that will find the commonalities between the two string values
 '''
-def findCommon(h1, h2):
-    for i in range(len(h1)):
-        if h1.find(h2[i]) != -1:
-            return h2[i]
-
+def findCommon(r1, r2, r3):
+    for l1 in r1:
+        for l2 in r2:
+            if l1 == l2:
+                for l3 in r3:
+                    if l3 == l2:
+                        return l1
 '''
 Step 2
-Have a function that will split up the text in half
+Combine every three rucksacks
 '''
 priorityLetters = []
-for rucksack in rucksacks:
-    halfIndex = int(len(rucksack) / 2)
-    length = len(rucksack)
-    firstHalf = rucksack[0:halfIndex]
-    secondHalf = rucksack[halfIndex:length]
-    priorityLetters.append(findCommon(firstHalf, secondHalf))
+for i in range(0,len(rucksacks),3):
+    priorityLetters.append(findCommon(rucksacks[i], rucksacks[i+1], rucksacks[i+2]))
 
 '''
 Step 4
