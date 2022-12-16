@@ -3,47 +3,50 @@ with open('input.txt', 'r') as f:
     choices = [entry.strip() for entry in lines]
 
 elfChoices = []
-myChoices = []
+results = []
 for choice in choices:
     split = choice.split(" ")
     elfChoices.append(split[0])
-    myChoices.append(split[1])
+    results.append(split[1])
 
-newElfChoices = []
-for choice in elfChoices:
-    if choice == "A":
-        newElfChoices.append("X")
-    elif choice == "B":
-        newElfChoices.append("Y")
-    else:
-        newElfChoices.append("Z")
-
-
-def resultPoint(c1, c2):
-
-    moves = ["X", "Y", "Z"]
-    myIndex = moves.index(c1)
-    elfIndex = moves.index(c2)
-
-    if myIndex == elfIndex:
-        return 3
-    elif (myIndex - elfIndex) % len(moves) == 1:
-        return 6
-    else:
-        return 0
-
-results = []
-
+myChoices = []
 for i in range(len(elfChoices)):
-    choicePoint = 0
-    winPoint = resultPoint(myChoices[i], newElfChoices[i])
-    if myChoices[i] == "X":
-        choicePoint = 1
-    elif myChoices[i] == "Y":
-        choicePoint = 2
-    elif myChoices[i] == "Z":
-        choicePoint = 3
+    if results[i] == "Y":  # draw
+        myChoices.append(elfChoices[i])
+    elif results[i] == "X":  # lose
+        if elfChoices[i] == "A":  # rock
+            myChoices.append("C")  # scissor
+        elif elfChoices[i] == "B":  # paper
+            myChoices.append("A")  # rock
+        elif elfChoices[i] == "C":  # scissor
+            myChoices.append("B")  # paper
+    elif results[i] == "Z":  # win
+        if elfChoices[i] == "A":  # rock
+            myChoices.append("B")  # paper
+        elif elfChoices[i] == "B":  # paper
+            myChoices.append("C")  # scissor
+        elif elfChoices[i] == "C":  # scissor
+            myChoices.append("A")  # rock
 
-    results.append(winPoint + choicePoint)
+points = []
+for i in range(len(results)):
+    resultPoints = 0
+    choicePoints = 0
 
-print(sum(results))
+    if results[i] == "X":
+        resultPoints = 0
+    if results[i] == "Y":
+        resultPoints = 3
+    if results[i] == "Z":
+        resultPoints = 6
+
+    if myChoices[i] == "A":
+        choicePoints = 1
+    if myChoices[i] == "B":
+        choicePoints = 2
+    if myChoices[i] == "C":
+        choicePoints = 3
+
+    points.append(resultPoints + choicePoints)
+
+print(sum(points))
