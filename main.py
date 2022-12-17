@@ -26,19 +26,27 @@ for i in range(len(col1)):
     ranges2.append(range(c2num1, c2num2+1))
 
 
-# Have a function that will check if the ranges meet the condition for a range inside another
-# 1. find the range that will contain the other
-# 2. see if the min and max are inside the other min and max.
+# Have a function that will check if the ranges overlap by seeing if they have any numbers that match
+# 1. Find the longer range
+# 2. Loop through range and see if the two ranges have the same number
+
+
+def findOverlap(r1, r2):
+    if(len(r1)) > len(r2):
+        lRange = r1
+        sRange = r2
+    else:
+        sRange = r2
+        lRange = r1
+    for num1 in lRange:
+        for num2 in sRange:
+            if num1 == num2:
+                return True
+    return False
 
 count = 0
 for i in range(len(ranges1)):
-    if len(ranges1[i]) > len(ranges2[i]):
-        if ranges2[i][0] >= ranges1[i][0] and ranges2[i][len(ranges2[i])-1] <= ranges1[i][len(ranges1[i])-1]:
-            count += 1
-    elif len(ranges1[i]) < len(ranges2[i]):
-        if ranges2[i][0] <= ranges1[i][0] and ranges2[i][len(ranges2[i])-1] >= ranges1[i][len(ranges1[i])-1]:
-            count += 1
-    elif ranges1[i] == ranges2[i]:
+    if findOverlap(ranges1[i], ranges2[i]):
         count += 1
 
 
