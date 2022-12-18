@@ -38,7 +38,7 @@ def move(amount, fromC, toC, list):
     for l in reversed(range(0, amount)):
         originalList.pop(l)
 
-    for d in range(0, len(movedLetters)):
+    for d in reversed(range(0, len(movedLetters))):
         destinationList.insert(0, movedLetters[d])
 
     return list
