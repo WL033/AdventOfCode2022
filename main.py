@@ -27,11 +27,11 @@ def has_repeated_letters(s):
 
 def subroutine(data):
     retIndex = None
-    for i in range(0, len(data) - 3):
-        potential = data[i:i + 4]
+    for i in range(0, len(data) - 13):
+        potential = data[i:i + 14]
         print(potential)
         if not has_repeated_letters(potential):
-            return i+4
+            return i+14
 
 
 
