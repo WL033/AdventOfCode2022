@@ -45,11 +45,25 @@ for i in reversed(range(0, len(sizeDictionaryOnlyFileSize))):
     new = dict(name=element["name"], size=newSize, d=element["d"], f=element["f"])
     sizeDictionary.append(new)
 
+sizes = []
+for element in sizeDictionary:
+    sizes.append(element["size"])
 sizeDictionary.reverse()
+sizes.sort()
 
-deleteSizes = []
-for directory in sizeDictionary:
-    if directory["size"] <= 100000:
-        deleteSizes.append(directory["size"])
+unused = 70000000 - (sizeDictionary[0]["size"])
 
-print(sum(deleteSizes))
+
+def findDeleteSize():
+    for size in sizes:
+        if size + unused > 30000000:
+            return size
+
+
+print(sizeDictionary)
+print()
+print(sizes)
+print()
+print(unused)
+print()
+print(findDeleteSize())
