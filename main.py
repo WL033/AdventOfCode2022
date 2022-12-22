@@ -14,7 +14,7 @@ for i in range(0, len(cdIndexes) - 1):
             cdStrip.append(lines[j].strip())
     cdStrips.append(cdStrip)
 
-sizeDictionaryOnlyFileSize = []
+processedDirectories = []
 for strip in cdStrips:
     dirName = strip[0][5:]
     directories = []
@@ -30,25 +30,24 @@ for strip in cdStrips:
                     lastCharIndex = c
             fileSizes.append(int(element[0:(lastCharIndex + 1)]))
             files.append(dict(name=element[(lastCharIndex + 2):], size=int(element[0:(lastCharIndex + 1)])))
-    sizeDictionaryOnlyFileSize.append(dict(name=dirName, size=sum(fileSizes), d=directories, f=files))
+    processedDirectories.append(dict(name=dirName, size=sum(fileSizes), d=directories, f=files))
+
+fileNames = []
+for directory in processedDirectories:
+    fileNames.append(directory["name"])
 
 sizeDictionary = []
-fileNames = []
-for i in reversed(range(0, len(sizeDictionaryOnlyFileSize))):
-    element = sizeDictionaryOnlyFileSize[i]
-    newSize = element["size"]
-    if len(element["d"]) > 0:
-        for d in element["d"]:
-            newSize += sizeDictionary[fileNames.index(d)]["size"]
-    fileNames.append(element["name"])
-    new = dict(name=element["name"], size=newSize, d=element["d"], f=element["f"])
-    sizeDictionary.append(new)
+for directory in processedDirectories:
+    subDirSum = 0
+    if(len(directory["d"]) > 0):
+        for ref in directory["d"]:
+            subDirSum += processedDirectories[fileNames.index(ref)]["size"]
+    sizeDictionary.append(dict(name=directory["name"], size=directory["size"] + subDirSum))
 
-sizeDictionary.reverse()
+deletionSize = 0
+for element in sizeDictionary:
+    if element["size"] < 100000:
+        deletionSize += element["size"]
 
-deleteSizes = []
-for directory in sizeDictionary:
-    if directory["size"] <= 100000:
-        deleteSizes.append(directory["size"])
+print(deletionSize)
 
-print(sum(deleteSizes))
