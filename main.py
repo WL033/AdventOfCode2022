@@ -1,6 +1,5 @@
 with open('input.txt', 'r') as f:
     lines = f.readlines()
-    terminal = [entry.strip() for entry in lines]
 
 cdIndexes = []
 for i in range(0, len(lines)):
