@@ -1,69 +1,46 @@
 with open('input.txt', 'r') as f:
     lines = f.readlines()
-    terminal = [entry.strip() for entry in lines]
+    outputs = [entry.strip() for entry in lines]
 
-cdIndexes = []
-for i in range(0, len(lines)):
-    if lines[i].find("$ cd") > -1 and lines[i].find("..") == -1:
-        cdIndexes.append(i)
-cdIndexes.append(len(lines))
-cdStrips = []
-for i in range(0, len(cdIndexes) - 1):
-    cdStrip = []
-    for j in range(cdIndexes[i], cdIndexes[i + 1]):
-        if lines[j].find("$ cd ..") == -1 and lines[j].find("$ ls") == -1:
-            cdStrip.append(lines[j].strip())
-    cdStrips.append(cdStrip)
+currentPath = "/root"
+directories = {"/root": 0}
 
-sizeDictionaryOnlyFileSize = []
-for strip in cdStrips:
-    dirName = strip[0][5:]
-    directories = []
-    files = []
-    fileSizes = []
-    for element in strip:
-        if element.find("dir ") > -1:
-            directories.append(element[4:])
-        elif element[0].isdigit():
-            lastCharIndex = None
-            for c in range(0, len(element)):
-                if element[c].isdigit():
-                    lastCharIndex = c
-            fileSizes.append(int(element[0:(lastCharIndex + 1)]))
-            files.append(dict(name=element[(lastCharIndex + 2):], size=int(element[0:(lastCharIndex + 1)])))
-    sizeDictionaryOnlyFileSize.append(dict(name=dirName, size=sum(fileSizes), d=directories, f=files))
+for output in outputs:
 
-sizeDictionary = []
-fileNames = []
-for i in reversed(range(0, len(sizeDictionaryOnlyFileSize))):
-    element = sizeDictionaryOnlyFileSize[i]
-    newSize = element["size"]
-    if len(element["d"]) > 0:
-        for d in element["d"]:
-            newSize += sizeDictionary[fileNames.index(d)]["size"]
-    fileNames.append(element["name"])
-    new = dict(name=element["name"], size=newSize, d=element["d"], f=element["f"])
-    sizeDictionary.append(new)
+    if output.find("$") != -1:  # $
 
-sizes = []
-for element in sizeDictionary:
-    sizes.append(element["size"])
-sizeDictionary.reverse()
-sizes.sort()
+        if output.find("cd") != -1:  # $cd
 
-unused = 70000000 - (sizeDictionary[0]["size"])
+            if output.find("..") != -1:
 
+                currentPath = currentPath[0:currentPath.rfind("/")]
 
-def findDeleteSize():
-    for size in sizes:
-        if size + unused > 30000000:
+            elif output.find("/") != -1:
+                currentPath = "/root"
+
+            else:  # $ cd [dirName]
+                currentPath = currentPath + "/" + output[output.find("cd") + 3:]
+                directories.update({currentPath: 0})
+
+    else:  # directory or file
+        if output[0].isdigit():
+            size = int(output[0:output.find(" ")])
+
+            parsingPath = currentPath
+            for i in range(0, currentPath.count("/")):
+                directories[parsingPath] += size
+                parsingPath = parsingPath[0:parsingPath.rfind("/")]
+
+sizeList = []
+for directory in directories:
+    sizeList.append(directories[directory])
+
+sizeList.sort()
+
+unused = 70000000 - directories["/root"]
+def findSmallest():
+    for size in sizeList:
+        if unused + size >= 30000000:
             return size
 
-
-print(sizeDictionary)
-print()
-print(sizes)
-print()
-print(unused)
-print()
-print(findDeleteSize())
+print(findSmallest())
