@@ -5,48 +5,79 @@ with open('input.txt', 'r') as f:
 numRow = len(trees)
 numCol = len(trees[0])
 
+# Create a function that will parse up, down, left, right to see if all those numbers are less than the target number
+# Parse through each tree:
+# if it is an edge tree, it is automatically visible
+# if it is a non-edge tree, pass the current row and column index through the function.
+# Create a boolean matrix for to record which trees are visible
+def allTrue(list):
+    for element in list:
+        if not element:
+            return False
+    return True
 
-def visible(target, sides):
-    larger = False
-    for num in sides:
-        if target > num:
-            larger = True
+
+def isVisible(row, column):
+    currentNum = int(trees[row][column])
+    # up
+    uBoolList = []
+    for r in range(0, row):
+        if int(trees[r][column]) < currentNum:
+            uBoolList.append(True)
         else:
-            larger = False
-    return larger
+            uBoolList.append(False)
+    if allTrue(uBoolList):
+        return True
+
+    # down
+    dBoolList = []
+    for r in range(row + 1, numRow):
+        if int(trees[r][column]) < currentNum:
+            dBoolList.append(True)
+        else:
+            dBoolList.append(False)
+    if allTrue(dBoolList):
+        return True
+
+    # left
+    lBoolList = []
+    for c in range(0, column):
+        if int(trees[row][c]) < currentNum:
+            lBoolList.append(True)
+        else:
+            lBoolList.append(False)
+    if allTrue(lBoolList):
+        return True
+
+    # right
+    rBoolList = []
+    for c in range(column + 1, numCol):
+        if int(trees[row][c]) < currentNum:
+            rBoolList.append(True)
+        else:
+            rBoolList.append(False)
+    if allTrue(rBoolList):
+        return True
+
+    return False
 
 
-visibilityChart = []
+truthMatrix = []
+
 for r in range(0, numRow):
-    row = []
+    currentRow = []
     for c in range(0, numCol):
-        if c == 0 or c == numCol - 1 or r == 0 or r == numRow - 1:
-            row.append(True)
+        if r == 0 or r == numRow-1 or c == 0 or c == numCol-1:
+            currentRow.append(True)
         else:
-            horizontalRanges = [range(0, c), range(c+1, numCol)]
-            verticalRanges = [range(0, r), range(r+1, numRow)]
-            numbers = []
-            for ran in horizontalRanges:
-                nums = []
-                for i in ran:
-                    nums.append(trees[r][i])
-                numbers.append(nums)
+            currentRow.append(isVisible(r, c))
 
-            for ran in verticalRanges:
-                nums = []
-                for i in ran:
-                    nums.append(trees[i][c])
-                numbers.append(nums)
+    truthMatrix.append(currentRow)
 
-            boolList = []
-            for i in range(0, 4):
-                boolList.append(visible(trees[r][c], numbers[i]))
+count = 0
+for r in truthMatrix:
+    for c in r:
+        if c:
+            count += 1
 
-            for b in boolList:
-                if b:
-                    row.append(True)
-                    break
-    visibilityChart.append(row)
-
-print(visibilityChart)
-
+print(count)
