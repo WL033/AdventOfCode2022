@@ -5,6 +5,7 @@ with open('input.txt', 'r') as f:
 numRow = len(trees)
 numCol = len(trees[0])
 
+
 # Create a function that will parse up, down, left, right to see if all those numbers are less than the target number
 # Parse through each tree:
 # if it is an edge tree, it is automatically visible
@@ -17,67 +18,71 @@ def allTrue(list):
     return True
 
 
-def isVisible(row, column):
+def scenicScore(row, column):
     currentNum = int(trees[row][column])
+    product = 1
+
     # up
-    uBoolList = []
-    for r in range(0, row):
+    counter = 0
+    for r in reversed(range(0, row)):
         if int(trees[r][column]) < currentNum:
-            uBoolList.append(True)
-        else:
-            uBoolList.append(False)
-    if allTrue(uBoolList):
-        return True
+            counter += 1
+        elif int(trees[r][column]) >= currentNum:
+            counter += 1
+            break
+
+    product *= counter
 
     # down
-    dBoolList = []
+    counter = 0
     for r in range(row + 1, numRow):
         if int(trees[r][column]) < currentNum:
-            dBoolList.append(True)
-        else:
-            dBoolList.append(False)
-    if allTrue(dBoolList):
-        return True
+            counter += 1
+        elif int(trees[r][column]) >= currentNum:
+            counter += 1
+            break
+    product *= counter
 
     # left
-    lBoolList = []
-    for c in range(0, column):
+    counter = 0
+    for c in reversed(range(0, column)):
         if int(trees[row][c]) < currentNum:
-            lBoolList.append(True)
-        else:
-            lBoolList.append(False)
-    if allTrue(lBoolList):
-        return True
+            counter += 1
+        elif int(trees[row][c]) >= currentNum:
+            counter += 1
+            break
+    product *= counter
 
     # right
-    rBoolList = []
+    counter = 0
     for c in range(column + 1, numCol):
         if int(trees[row][c]) < currentNum:
-            rBoolList.append(True)
-        else:
-            rBoolList.append(False)
-    if allTrue(rBoolList):
-        return True
+            counter += 1
+        elif int(trees[row][c]) >= currentNum:
+            counter += 1
+            break
+    product *= counter
 
-    return False
+    return product
 
 
-truthMatrix = []
+scenicScoreMatrix = []
 
 for r in range(0, numRow):
     currentRow = []
     for c in range(0, numCol):
-        if r == 0 or r == numRow-1 or c == 0 or c == numCol-1:
-            currentRow.append(True)
+        if r == 0 or r == numRow - 1 or c == 0 or c == numCol - 1:
+            currentRow.append(0)
         else:
-            currentRow.append(isVisible(r, c))
+            currentRow.append(scenicScore(r, c))
 
-    truthMatrix.append(currentRow)
+    scenicScoreMatrix.append(currentRow)
 
-count = 0
-for r in truthMatrix:
+max = 0
+for r in scenicScoreMatrix:
     for c in r:
-        if c:
-            count += 1
+        if c > max:
+            max = c
+print(max)
 
-print(count)
+
